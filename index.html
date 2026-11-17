@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leotard Order Form</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #2b2a28;
+    --muted: #7a776f;
+    --line: #e6e3dc;
+    --accent: #7a5c8f;
+    --accent-soft: #f1ecf5;
+    --ok: #2e7d52;
+    --ok-soft: #e8f4ee;
+    --warn: #b3591f;
+    --warn-soft: #fbf0e6;
+    --bad: #a33a3a;
+    --bad-soft: #f9ecec;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Avenir Next", "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  header.app { text-align: center; margin-bottom: 28px; }
+  header.app h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.2px; }
+  header.app p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2 {
+    margin: 0 0 4px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .card .sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+
+  label.field { display: block; margin-bottom: 14px; font-size: 13px; font-weight: 600; }
+  label.field span.lbl { display: block; margin-bottom: 5px; color: var(--ink); }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 14px;
+    background: #fdfdfc;
+    color: var(--ink);
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  textarea { resize: vertical; min-height: 58px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 16px; }
+  @media (max-width: 620px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    padding: 7px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: #fdfdfc;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: all .12s ease;
+    color: var(--ink);
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+  .swatch {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px 6px 6px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: #fdfdfc;
+    cursor: pointer;
+    font-size: 13px;
+    transition: border-color .12s ease;
+  }
+  .swatch:hover { border-color: var(--accent); }
+  .swatch.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); font-weight: 600; }
+  .swatch .dot { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); flex: none; }
+
+  .preview-box {
+    margin-top: 16px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    background: #faf9f7;
+  }
+  .preview-box h3 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+  .leo-svg { display: block; margin: 0 auto 12px; }
+  .preview-note { font-size: 14px; margin: 0; }
+  .preview-note strong { color: var(--accent); }
+
+  .material-option {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: #fdfdfc;
+    transition: border-color .12s ease;
+  }
+  .material-option:hover { border-color: var(--accent); }
+  .material-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .material-option input { margin-top: 4px; accent-color: var(--accent); }
+  .mat-name { font-weight: 700; font-size: 14.5px; }
+  .mat-desc { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+  .badge {
+    margin-left: auto;
+    flex: none;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .badge.ok { background: var(--ok-soft); color: var(--ok); }
+  .badge.bad { background: var(--bad-soft); color: var(--bad); }
+  .badge.soon { background: var(--warn-soft); color: var(--warn); }
+
+  .note {
+    margin-top: 12px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+  }
+  .note.ok { background: var(--ok-soft); color: var(--ok); }
+  .note.warn { background: var(--warn-soft); color: var(--warn); }
+  .note.info { background: var(--accent-soft); color: #55446a; }
+  .note strong { font-weight: 700; }
+  .hidden { display: none; }
+  .suggest-link { background: none; border: none; color: inherit; text-decoration: underline; cursor: pointer; font: inherit; padding: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <h1>Leotard Order Form</h1>
+    <p>Custom gymnastics leotards — sample demo, nothing is saved between visits.</p>
+  </header>
+
+  <!-- 1. ORDER DETAILS -->
+  <section class="card" id="sec-order">
+    <h2>1. Order details</h2>
+    <p class="sub">Fill in the gymnast's details and when the leotard is needed.</p>
+
+    <div class="grid3">
+      <label class="field"><span class="lbl">Gymnast name</span>
+        <input type="text" id="gymnast" value="Nur Aisyah binti Rahim" placeholder="e.g. Nur Aisyah">
+      </label>
+      <label class="field"><span class="lbl">Size</span>
+        <select id="size">
+          <option>Child 8</option>
+          <option selected>Child 10</option>
+          <option>Child 12</option>
+          <option>Adult XS</option>
+          <option>Adult S</option>
+          <option>Adult M</option>
+        </select>
+      </label>
+      <label class="field"><span class="lbl">Delivery deadline</span>
+        <input type="date" id="deadline">
+      </label>
+    </div>
+
+    <label class="field"><span class="lbl">Order note</span>
+      <textarea id="ordernote" placeholder="e.g. Name initial embroidered on the chest">Please add "AS" initials embroidered on the chest. Needed before the gym club's June showcase in Shah Alam.</textarea>
+    </label>
+
+    <div id="deadline-note" class="note warn hidden"></div>
+  </section>
+
+  <!-- 2. DESIGN BUILDER -->
+  <section class="card" id="sec-design">
+    <h2>2. Design builder</h2>
+    <p class="sub">Pick a style and colours — the preview updates straight away.</p>
+
+    <label class="field"><span class="lbl">Design style</span></label>
+    <div class="chips" id="style-chips">
+      <button class="chip selected" data-style="Classic Tank">Classic Tank</button>
+      <button class="chip" data-style="Long Sleeve">Long Sleeve</button>
+      <button class="chip" data-style="Asymmetric Zip">Asymmetric Zip</button>
+      <button class="chip" data-style="Skirted">Skirted</button>
+    </div>
+
+    <label class="field" style="margin-top:16px"><span class="lbl">Colours (pick up to 3)</span></label>
+    <div class="swatches" id="colour-swatches">
+      <button class="swatch selected" data-colour="Royal Purple" data-hex="#6b4a8c"><span class="dot" style="background:#6b4a8c"></span>Royal Purple</button>
+      <button class="swatch" data-colour="Deep Navy" data-hex="#26456e"><span class="dot" style="background:#26456e"></span>Deep Navy</button>
+      <button class="swatch" data-colour="Emerald Green" data-hex="#1f7a55"><span class="dot" style="background:#1f7a55"></span>Emerald Green</button>
+      <button class="swatch" data-colour="Crimson Red" data-hex="#a8323e"><span class="dot" style="background:#a8323e"></span>Crimson Red</button>
+      <button class="swatch" data-colour="Champagne Gold" data-hex="#c9a25a"><span class="dot" style="background:#c9a25a"></span>Champagne Gold</button>
+      <button class="swatch" data-colour="Silver Mist" data-hex="#b9bcc2"><span class="dot" style="background:#b9bcc2"></span>Silver Mist</button>
+      <button class="swatch" data-colour="Ivory White" data-hex="#f0ece2"><span class="dot" style="background:#f0ece2"></span>Ivory White</button>
+    </div>
+
+    <div class="preview-box">
+      <h3>Live preview</h3>
+      <svg class="leo-svg" id="leo-svg" width="120" height="150" viewBox="0 0 120 150" aria-hidden="true">
+        <!-- body -->
+        <path id="leo-body" d="M45 12 L45 8 Q60 0 75 8 L75 12 L100 30 L96 44 L78 36 L78 132 Q60 140 42 132 L42 36 L24 44 L20 30 Z"
+              fill="#6b4a8c" stroke="#4a3260" stroke-width="1.5"/>
+        <!-- trim -->
+        <path id="leo-trim" d="M45 12 L45 8 Q60 0 75 8 L75 12" fill="none" stroke="#c9a25a" stroke-width="4" stroke-linecap="round"/>
+        <!-- skirt (hidden unless Skirted) -->
+        <path id="leo-skirt" d="M40 118 L80 118 L94 148 L26 148 Z" fill="#c9a25a" opacity="0.85" class="hidden"/>
+        <!-- sleeves (hidden unless Long Sleeve) -->
+        <path id="leo-sleeve-l" d="M42 36 L20 30 L8 78 L26 84 Z" fill="#c9a25a" stroke="#4a3260" stroke-width="1.2" class="hidden"/>
+        <path id="leo-sleeve-r" d="M78 36 L100 30 L112 78 L94 84 Z" fill="#c9a25a" stroke="#4a3260" stroke-width="1.2" class="hidden"/>
+        <!-- zip line (Asymmetric) -->
+        <line id="leo-zip" x1="72" y1="10" x2="50" y2="134" stroke="#c9a25a" stroke-width="3" class="hidden"/>
+      </svg>
+      <p class="preview-note" id="preview-note"></p>
+    </div>
+  </section>
+
+  <!-- 3. MATERIAL CHECKER -->
+  <section class="card" id="sec-material">
+    <h2>3. Material checker</h2>
+    <p class="sub">Choose a fabric and check whether it is available from the shop.</p>
+
+    <div id="material-list"></div>
+
+    <div id="material-note" class="note ok hidden"></div>
+    <div id="suitability-note" class="note info"></div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Material data (sample only) ---------- */
+  const MATERIALS = [
+    {
+      id: "nylon-lycra",
+      name: "Nylon–Spandex Lycra",
+      desc: "Stretchy classic with a matte finish — the everyday training choice.",
+      available: true,
+      leadDays: 14,
+      suitability: "A dependable all-rounder: comfortable for daily training and holds bright colours well."
+    },
+    {
+      id: "velvet",
+      name: "Velour / Velvet Stretch",
+      desc: "Soft plush surface with a rich sheen — popular for showcase leotards.",
+      available: true,
+      leadDays: 21,
+      suitability: "Lovely for showcase pieces; slightly warmer to wear, best for indoor events."
+    },
+    {
+      id: "hologram",
+      name: "Hologram Foil Spandex",
+      desc: "Shimmery foil fabric that catches the stage lights.",
+      available: false,
+      leadDays: 35,
+      closest: "velvet",
+      suitability: "Eye-catching on stage, but the foil layer needs gentle care and hand washing."
+    },
+    {
+      id: "mesh",
+      name: "Stretch Mesh Overlay",
+      desc: "Sheer mesh panels for sleeves and backs — usually combined with lycra.",
+      available: true,
+      leadDays: 18,
+      suitability: "Used as an overlay on lycra rather than alone; adds a light, airy look."
+    },
+    {
+      id: "metallic-thread",
+      name: "Metallic Thread Knit",
+      desc: "Lurex knit with a subtle sparkle woven through.",
+      available: false,
+      leadDays: 40,
+      closest: "hologram",
+      note: "Currently out of stock and the supplier lead time is long. An alternative is suggested below.",
+      suitability: "Festive sparkle, but the metallic threads can feel scratchy against the skin."
+    }
+  ];
+
+  const MIN_LEAD_DAYS = Math.min(...MATERIALS.filter(m => m.available).map(m => m.leadDays));
+
+  /* ---------- State ---------- */
+  let state = {
+    style: "Classic Tank",
+    colours: ["Royal Purple", "Champagne Gold"],
+    material: "nylon-lycra",
+    deadline: null
+  };
+
+  /* ---------- Elements ---------- */
+  const $ = id => document.getElementById(id);
+  const deadlineInput = $("deadline");
+  const deadlineNote = $("deadline-note");
+  const materialNote = $("material-note");
+  const previewNote = $("preview-note");
+
+  /* ---------- Default deadline: none pre-filled; note explains ---------- */
+
+  /* ---------- Design builder ---------- */
+  function hexOf(colourName) {
+    const sw = document.querySelector('#colour-swatches [data-colour="' + colourName + '"]');
+    return sw ? sw.dataset.hex : "#6b4a8c";
+  }
+
+  function renderPreview() {
+    const main = state.colours[0] || "Royal Purple";
+    const accent = state.colours[1] || state.colours[0] || "Champagne Gold";
+
+    // colour the SVG
+    $("leo-body").setAttribute("fill", hexOf(main));
+    $("leo-body").setAttribute("stroke", shade(hexOf(main), -30));
+    const accentHex = hexOf(accent);
+    $("leo-trim").setAttribute("stroke", accentHex);
+    $("leo-skirt").setAttribute("fill", accentHex);
+    $("leo-sleeve-l").setAttribute("fill", accentHex);
+    $("leo-sleeve-r").setAttribute("fill", accentHex);
+    $("leo-zip").setAttribute("stroke", accentHex);
+
+    // style features
+    $("leo-skirt").classList.toggle("hidden", state.style !== "Skirted");
+    const sleeves = state.style === "Long Sleeve";
+    $("leo-sleeve-l").classList.toggle("hidden", !sleeves);
+    $("leo-sleeve-r").classList.toggle("hidden", !sleeves);
+    $("leo-zip").classList.toggle("hidden", state.style !== "Asymmetric Zip");
+
+    // preview text
+    const colourText = state.colours.length
+      ? state.colours.join(" + ")
+      : "no colours chosen yet";
+    previewNote.innerHTML =
+      "<strong>" + state.style + "</strong> in " + colourText +
+      " — trim and accents in the second colour where available. Update your picks above and this preview refreshes instantly.";
+  }
+
+  function shade(hex, pct) {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.min(255, Math.max(0, (n >> 16) + pct));
+    const g = Math.min(255, Math.max(0, ((n >> 8) & 255) + pct));
+    const b = Math.min(255, Math.max(0, (n & 255) + pct));
+    return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+  }
+
+  document.querySelectorAll("#style-chips .chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("#style-chips .chip").forEach(c => c.classList.remove("selected"));
+      chip.classList.add("selected");
+      state.style = chip.dataset.style;
+      renderPreview();
+    });
+  });
+
+  document.querySelectorAll("#colour-swatches .swatch").forEach(sw => {
+    sw.addEventListener("click", () => {
+      const c = sw.dataset.colour;
+      const i = state.colours.indexOf(c);
+      if (i >= 0) {
+        state.colours.splice(i, 1);
+        sw.classList.remove("selected");
+      } else {
+        if (state.colours.length >= 3) state.colours.pop();
+        state.colours.unshift(c);
+      }
+      // sync selected classes to state
+      document.querySelectorAll("#colour-swatches .swatch").forEach(s =>
+        s.classList.toggle("selected", state.colours.includes(s.dataset.colour)));
+      renderPreview();
+    });
+  });
+
+  /* ---------- Material checker ---------- */
+  function renderMaterials() {
+    const list = $("material-list");
+    list.innerHTML = "";
+    MATERIALS.forEach(m => {
+      const row = document.createElement("label");
+      row.className = "material-option" + (state.material === m.id ? " selected" : "");
+      const badge = m.available
+        ? '<span class="badge ok">Available</span>'
+        : '<span class="badge bad">Not available</span>';
+      row.innerHTML =
+        '<input type="radio" name="material" value="' + m.id + '"' +
+        (state.material === m.id ? " checked" : "") + '>' +
+        '<span><span class="mat-name">' + m.name + '</span>' +
+        '<p class="mat-desc">' + m.desc + ' · approx. ' + m.leadDays + ' days to make</p></span>' +
+        badge;
+      row.querySelector("input").addEventListener("change", () => {
+        state.material = m.id;
+        renderMaterials();
+        checkDeadline();
+      });
+      list.appendChild(row);
+    });
+
+    // availability note for current selection
+    const m = MATERIALS.find(x => x.id === state.material);
+    materialNote.className = "note " + (m.available ? "ok" : "warn");
+    materialNote.classList.remove("hidden");
+    if (m.available) {
+      materialNote.innerHTML = "<strong>" + m.name + " is available.</strong> Approx. " +
+        m.leadDays + " days from order to delivery.";
+    } else {
+      const alt = m.closest ? MATERIALS.find(x => x.id === m.closest) : null;
+      const altText = alt
+        ? ' Closest available option: <button type="button" class="suggest-link" id="suggest-btn">' + alt.name + "</button>"
+          + (m.note ? " " + m.note : ".")
+        : (m.note || "");
+      materialNote.innerHTML = "<strong>" + m.name + " is currently not available.</strong>" + altText;
+      const btn = $("suggest-btn");
+      if (btn && alt) btn.addEventListener("click", () => {
+        state.material = alt.id;
+        renderMaterials();
+        checkDeadline();
+      });
+    }
+
+    $("suitability-note").innerHTML = "<strong>Suitability note:</strong> " + m.suitability;
+  }
+
+  /* ---------- Deadline checker ---------- */
+  function checkDeadline() {
+    const m = MATERIALS.find(x => x.id === state.material);
+    const val = deadlineInput.value;
+    if (!val) {
+      deadlineNote.className = "note info hidden";
+      deadlineNote.classList.add("hidden");
+      return;
+    }
+    const deadline = new Date(val + "T00:00:00");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const days = Math.round((deadline - today) / 86400000);
+
+    if (m.available && days >= m.leadDays) {
+      deadlineNote.className = "note ok";
+      deadlineNote.innerHTML = "<strong>Looks good.</strong> " + days + " days until the deadline — " +
+        m.name + " needs about " + m.leadDays + " days, so there is enough time.";
+    } else {
+      deadlineNote.className = "note warn";
+      let msg = "<strong>Not enough time for " + m.name + ".</strong> ";
+      if (!m.available) {
+        msg += "This material is unavailable anyway. ";
+      } else {
+        msg += "It needs about " + m.leadDays + " days but the deadline is only " + days + " days away. ";
+      }
+      const feasible = MATERIALS.filter(x => x.available && days >= x.leadDays);
+      if (feasible.length) {
+        const fastest = feasible.reduce((a, b) => (a.leadDays <= b.leadDays ? a : b));
+        msg += "With this deadline, <strong>" + fastest.name + "</strong> (about " + fastest.leadDays +
+          " days) would fit. Otherwise, move the deadline to at least <strong>" +
+          formatDate(addDays(today, m.leadDays)) + "</strong>.";
+      } else {
+        msg += "No material can meet this deadline — please allow at least <strong>" +
+          formatDate(addDays(today, MIN_LEAD_DAYS)) + "</strong>.";
+      }
+      deadlineNote.innerHTML = msg;
+    }
+    deadlineNote.classList.remove("hidden");
+  }
+
+  function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  function formatDate(d) {
+    return d.toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" });
+  }
+  deadlineInput.addEventListener("change", checkDeadline);
+
+  /* ---------- Init: example entries visible immediately ---------- */
+  state.material = "nylon-lycra";
+  renderMaterials();
+  renderPreview();
+  checkDeadline();
+})();
+</script>
+</body>
+</html>
